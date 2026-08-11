@@ -1,0 +1,44 @@
+name: Snap Watch
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch: {}
+
+concurrency:
+  group: snap-watch
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          playwright install --with-deps chromium
+
+      - name: Run watcher
+        env:
+          SNAP_NOTIFIER: telegram
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python snap_watch.py --once
+
+      - name: Commit updated state
+        run: |
+          git config user.name "snap-watch-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add snap_state.json
+          git diff --cached --quiet || git commit -m "Update snap_state.json [skip ci]"
+          git push
