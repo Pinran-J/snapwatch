@@ -3,19 +3,21 @@
     "available": false,
     "cheapest": null,
     "prices": [],
-    "checked": "2026-08-12T11:11:50"
+    "checked": "2026-08-12T12:00:33"
   },
   "2026-08-15": {
     "available": false,
     "cheapest": null,
     "prices": [],
-    "checked": "2026-08-12T11:12:12"
+    "checked": "2026-08-12T12:00:53"
   },
   "2026-08-16": {
-    "available": false,
-    "cheapest": null,
-    "prices": [],
-    "checked": "2026-08-12T11:12:34"
+    "available": true,
+    "cheapest": 60.0,
+    "prices": [
+      60.0
+    ],
+    "checked": "2026-08-12T12:01:16"
   },
   "2026-08-17": {
     "available": true,
@@ -23,6 +25,6 @@
     "prices": [
       65.0
     ],
-    "checked": "2026-08-12T11:12:59"
+    "checked": "2026-08-12T12:01:39"
   }
 }
