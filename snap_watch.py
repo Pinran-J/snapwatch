@@ -636,10 +636,18 @@ def main() -> None:
     parser.add_argument("--show", action="store_true", help="show the browser window")
     parser.add_argument("--telegram-id", action="store_true",
                         help="print your Telegram chat id and exit")
+    parser.add_argument("--test-notify", action="store_true",
+                        help="send a test ping through the configured notifier and exit "
+                             "(doesn't touch state or run any searches)")
     args = parser.parse_args()
 
     if args.telegram_id:
         get_telegram_chat_id()
+        return
+
+    if args.test_notify:
+        notify("Snap watch: test ping",
+               f"If you're reading this, {NOTIFIER} notifications are working.")
         return
 
     if args.show:

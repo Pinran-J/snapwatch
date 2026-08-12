@@ -3,7 +3,13 @@ name: Snap Watch
 on:
   schedule:
     - cron: "*/25 * * * *"
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "check = run the real fare search; test-notify = just send a test ping"
+        type: choice
+        options: [check, test-notify]
+        default: check
 
 concurrency:
   group: snap-watch
@@ -26,16 +32,24 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          playwright install --with-deps chromium
+          if [ "${{ inputs.mode }}" != "test-notify" ]; then
+            playwright install --with-deps chromium
+          fi
 
       - name: Run watcher
         env:
           SNAP_NOTIFIER: telegram
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: python snap_watch.py --once
+        run: |
+          if [ "${{ inputs.mode }}" = "test-notify" ]; then
+            python snap_watch.py --test-notify
+          else
+            python snap_watch.py --once
+          fi
 
       - name: Commit updated state
+        if: inputs.mode != 'test-notify'
         run: |
           git config user.name "snap-watch-bot"
           git config user.email "actions@users.noreply.github.com"
